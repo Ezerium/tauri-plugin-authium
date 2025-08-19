@@ -2,11 +2,12 @@
 name = "tauri-plugin-authium"
 version = "0.1.0"
 authors = [ "grcq" ]
-description = ""
+description = "Plugin for Tauri as a wrapper for Authium."
 edition = "2021"
 rust-version = "1.77.2"
 exclude = ["/examples", "/dist-js", "/guest-js", "/node_modules"]
 links = "tauri-plugin-authium"
+license = "MIT"
 
 [dependencies]
 tauri = { version = "2.7.0" }

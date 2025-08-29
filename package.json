@@ -1,6 +1,6 @@
 {
   "name": "tauri-plugin-authium-api",
-  "version": "0.1.0",
+  "version": "0.2.0-rc.0",
   "author": "grcq",
   "description": "Plugin for Tauri as a wrapper for Authium.",
   "type": "module",

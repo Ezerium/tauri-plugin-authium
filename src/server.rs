@@ -66,8 +66,8 @@ async fn login(query: web::Query<LoginQuery>) -> impl Responder {
     let expiry = query.expiry.clone();
     let mut url = Url::parse(format!("{}/authorize", AUTHIUM_ENDPOINT).as_str()).unwrap();
     url.query_pairs_mut()
-        .append_pair("apiKey", &config.api_key)
-        .append_pair("appId", &config.app_id)
+        .append_pair("apiKey", &api_key)
+        .append_pair("appId", &app_id)
         .append_pair("state", &state);
     if let Some(expiry) = expiry {
         url.query_pairs_mut().append_pair("exp", &expiry.to_string());

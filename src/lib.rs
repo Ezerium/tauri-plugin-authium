@@ -62,7 +62,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, AuthiumConfig> {
             commands::sign_in,
             commands::logout,
             commands::get_user,
-            commands::is_logged_in
+            commands::is_logged_in,
+            commands::refresh
         ])
         .setup(|app, api| {
             *DATA_DIR.lock().unwrap() = app.path().app_data_dir().unwrap_or(std::path::PathBuf::new()).to_string_lossy().to_string();

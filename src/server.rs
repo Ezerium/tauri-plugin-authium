@@ -53,6 +53,15 @@ async fn login(query: web::Query<LoginQuery>) -> impl Responder {
     }
 
     let config = AUTH_CONFIG.lock().unwrap().as_ref().unwrap().clone();
+    let mut api_key = config.api_key.clone();
+    let mut app_id = config.app_id.clone();
+    if api_key.to_lowercase().starts_with("env:") {
+        api_key = std::env::var(&api_key[4..]).unwrap_or_default();
+    }
+
+    if app_id.to_lowercase().starts_with("env:") {
+        app_id = std::env::var(&app_id[4..]).unwrap_or_default();
+    }
 
     let expiry = query.expiry.clone();
     let mut url = Url::parse(format!("{}/authorize", AUTHIUM_ENDPOINT).as_str()).unwrap();

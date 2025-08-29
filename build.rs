@@ -1,4 +1,4 @@
-const COMMANDS: &[&str] = &["sign_in", "logout", "is_logged_in", "get_user"];
+const COMMANDS: &[&str] = &["sign_in", "logout", "is_logged_in", "get_user", "refresh"];
 
 fn main() {
   tauri_plugin::Builder::new(COMMANDS)

@@ -125,6 +125,32 @@ Denies the ping command without any pre-configured scope.
 <tr>
 <td>
 
+`authium:allow-refresh`
+
+</td>
+<td>
+
+Enables the refresh command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`authium:deny-refresh`
+
+</td>
+<td>
+
+Denies the refresh command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `authium:allow-sign-in`
 
 </td>

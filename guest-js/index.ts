@@ -17,4 +17,8 @@ export async function logout(): Promise<void> {
     await invoke('plugin:authium|logout');
 }
 
+export function refresh(refresh_data: boolean = false): void {
+    invoke('plugin:authium|refresh', { refresh_data });
+}
+
 export * from './types';

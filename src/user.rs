@@ -106,6 +106,21 @@ async fn refresh(refresh_token: String) -> Result<(), String> {
     }
 }
 
+pub async fn refresh_user(refresh_data: bool) -> Result<(), String> {
+    let token = REFRESH_TOKEN.lock().unwrap().clone().unwrap_or_default();
+    refresh(token).await.expect("Failed to refresh token");
+    if refresh_data {
+        if let Ok(u) = fetch_user_data(ACCESS_TOKEN.lock().unwrap().clone().unwrap_or_default()).await {
+            *USER.lock().unwrap() = Some(u.clone());
+            Ok(())
+        } else {
+            Err("Failed to fetch user data".into())
+        }
+    } else {
+        Ok(())
+    }
+}
+
 pub fn get_user() -> Option<User> {
     let _ = refresh(REFRESH_TOKEN.lock().unwrap().clone().unwrap_or_default());
 

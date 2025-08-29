@@ -36,3 +36,8 @@ pub(crate) fn logout() {
 pub(crate) fn is_logged_in() -> bool {
     crate::user::is_logged_in()
 }
+
+#[command]
+pub(crate) fn refresh(refresh_data: bool) {
+    let _ = crate::user::refresh_user(refresh_data);
+}

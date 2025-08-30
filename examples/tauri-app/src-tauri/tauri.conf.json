@@ -1,7 +1,7 @@
 {
   "productName": "tauri-app",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.ezerium.dev",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
@@ -33,11 +33,5 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
-  },
-  "plugins": {
-    "authium": {
-      "apiKey": "ezpk_koQMGPU0S3Xj7H77KqlOpQ6wcMPeHQWLP9OL",
-      "appId": "grcLdbLVHNoAIUtynwyqMKT1T7uIzirl"
-    }
   }
 }

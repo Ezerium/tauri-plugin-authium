@@ -53,15 +53,12 @@ async fn login(query: web::Query<LoginQuery>) -> impl Responder {
     }
 
     let config = AUTH_CONFIG.lock().unwrap().as_ref().unwrap().clone();
-    let mut api_key = config.api_key.clone();
-    let mut app_id = config.app_id.clone();
-    if api_key.to_lowercase().starts_with("env:") {
-        api_key = std::env::var(&api_key[4..]).unwrap_or_default();
+    if (config.app_id.is_none()) || (config.api_key.is_none()) {
+        return HttpResponse::BadRequest().body("API key or App ID not set in configuration");
     }
 
-    if app_id.to_lowercase().starts_with("env:") {
-        app_id = std::env::var(&app_id[4..]).unwrap_or_default();
-    }
+    let api_key = config.api_key.clone().unwrap();
+    let app_id = config.app_id.clone().unwrap();
 
     let expiry = query.expiry.clone();
     let mut url = Url::parse(format!("{}/authorize", AUTHIUM_ENDPOINT).as_str()).unwrap();
@@ -109,6 +106,20 @@ async fn callback(
 
     HttpResponse::Ok()
         .body("Authentication successful! You can close this window.")
+}
+
+#[derive(Deserialize)]
+struct ErrorQuery {
+    error: Option<String>,
+}
+
+#[get("/error")]
+async fn error(query: web::Query<ErrorQuery>) -> impl Responder {
+    let error_message = query.error.clone().unwrap_or_else(|| "Unknown error".into());
+    HttpResponse::InternalServerError().body(format!(
+        "Authentication failed: {}. You can close this window.",
+        error_message
+    ))
 }
 
 fn rand_str(len: usize) -> String {

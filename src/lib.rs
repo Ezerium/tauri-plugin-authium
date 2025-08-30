@@ -50,14 +50,25 @@ impl<R: Runtime, T: Manager<R>> crate::AuthiumExt<R> for T {
 #[derive(Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthiumConfig {
-    pub api_key: String,
-    pub app_id: String,
+    pub api_key: Option<String>,
+    pub app_id: Option<String>,
     pub port: Option<u16>,
 }
 
+impl AuthiumConfig {
+    pub fn new(api_key: String, app_id: String) -> Self {
+        Self { api_key: Some(api_key), app_id: Some(app_id), port: None }
+    }
+
+    pub fn with_port(mut self, port: u16) -> Self {
+        self.port = Some(port);
+        self
+    }
+}
+
 /// Initializes the plugin.
-pub fn init<R: Runtime>() -> TauriPlugin<R, AuthiumConfig> {
-    Builder::<R, AuthiumConfig>::new("authium")
+pub fn init<R: Runtime>(config: Option<AuthiumConfig>) -> TauriPlugin<R, Option<AuthiumConfig>> {
+    Builder::<R, Option<AuthiumConfig>>::new("authium")
         .invoke_handler(tauri::generate_handler![
             commands::sign_in,
             commands::logout,
@@ -65,11 +76,11 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, AuthiumConfig> {
             commands::is_logged_in,
             commands::refresh
         ])
-        .setup(|app, api| {
+        .setup(move |app, api| {
             *DATA_DIR.lock().unwrap() = app.path().app_data_dir().unwrap_or(std::path::PathBuf::new()).to_string_lossy().to_string();
 
-            let config = api.config().clone();
-            app.manage(config.clone());
+            let c = config.clone().unwrap_or_else(|| api.config().clone().expect("no configuration found for authium"));
+            app.manage(c.clone());
 
             #[cfg(mobile)]
             let authium = mobile::init(app, api)?;
@@ -85,7 +96,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, AuthiumConfig> {
             let handle = app.app_handle();
             let boxed_handle = Box::new(handle.clone());
             thread::spawn(move || {
-                server::start_server(&*boxed_handle, &config)
+                server::start_server(&*boxed_handle, &c)
                     .expect("Failed to start Authium server");
             });
 

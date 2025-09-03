@@ -14,9 +14,9 @@ mod mobile;
 
 mod commands;
 mod error;
-mod models;
+pub mod models;
 mod server;
-mod user;
+pub mod user;
 mod storage;
 
 static DATA_DIR: Mutex<String> = Mutex::new(String::new());

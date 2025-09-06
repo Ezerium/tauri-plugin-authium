@@ -1,7 +1,7 @@
 use std::{fs, path::Path, time::{Duration, SystemTime}};
 
 use aes_gcm::{aead::Aead, Aes256Gcm, Key, KeyInit as _, Nonce};
-use tauri::async_runtime::spawn;
+use tauri::{async_runtime::spawn, AppHandle, Runtime, Emitter};
 
 use crate::DATA_DIR;
 
@@ -20,7 +20,7 @@ fn create_file_if_not_exists(file_path: &str) {
     }
 }
 
-pub fn setup_storage() {
+pub fn setup_storage<R: Runtime + 'static>(handle: AppHandle<R>) {
     let data_dir = DATA_DIR.lock().unwrap().clone();
 
     create_dir_if_not_exists(&data_dir);
@@ -29,8 +29,9 @@ pub fn setup_storage() {
     if let Ok((access_token, refresh_token, expiry)) = data {
         if !access_token.is_empty() && !refresh_token.is_empty() {
             spawn(async move {
-                // quietly ignore errors
-                let _ = crate::user::login(access_token, refresh_token, expiry).await;
+                if let Ok(u) = crate::user::login(access_token, refresh_token, expiry).await {
+                    handle.emit("authium:login-success", u).expect("Failed to emit login event");
+                }
             });
         }
     } else {

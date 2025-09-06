@@ -89,14 +89,15 @@ pub fn init<R: Runtime>(config: Option<AuthiumConfig>) -> TauriPlugin<R, Option<
             let authium = desktop::init(app, api)?;
             app.manage(authium);
 
-            thread::spawn(move || {
-                setup_storage();
-            });
-
             let handle = app.app_handle();
             let boxed_handle = Box::new(handle.clone());
             thread::spawn(move || {
-                server::start_server(&*boxed_handle, &c)
+                setup_storage(*boxed_handle);
+            });
+            
+            let boxed_handle = Box::new(handle.clone());
+            thread::spawn(move || {
+                server::start_server(*boxed_handle, &c)
                     .expect("Failed to start Authium server");
             });
 

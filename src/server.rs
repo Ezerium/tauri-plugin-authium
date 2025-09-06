@@ -16,7 +16,7 @@ lazy_static! {
 }
 
 #[actix_web::main]
-pub async fn start_server<R: Runtime + 'static>(handle: &AppHandle<R>, config: &AuthiumConfig) -> std::io::Result<()> {
+pub async fn start_server<R: Runtime + 'static>(handle: AppHandle<R>, config: &AuthiumConfig) -> std::io::Result<()> {
     AUTH_CONFIG.lock().unwrap().replace(config.clone());
     let port = config.port.unwrap_or(6483);
 
